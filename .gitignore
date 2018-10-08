@@ -1,6 +1,7 @@
 
 ### Additional custom ignores ###
 /tpm
+tmp
 credentials.json
 token.json
 tpm/*
