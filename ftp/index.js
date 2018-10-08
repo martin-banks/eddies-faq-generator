@@ -84,67 +84,6 @@ c.connect({
   host: HOST,
   user: USERNAME,
   password: PASSWORD,
-  passvTimeout: 15 * 60 * 1000, // 15 minutes
+  passvTimeout: 5 * 60 * 1000, // 5 minutes
 })
 
-
-
-    // c.mkdir('test/uploader/201810/new_folder', err => {
-    //   response.forEach((file, i) => {
-    //     if (err) {
-    //       console.log(err)
-    //       c.end()
-    //       return
-    //     }
-    //     c.put(`multi-upload/${file}`, `test/uploader/201810/new_folder/${file}`, err => {
-    //       if (err) {
-    //         console.log(err)
-    //         c.end()
-    //         return
-    //       }
-    //       if ((i + 1) === response.length) {
-    //         c.list('test/uploader/201810/new_folder', (err, list) => {
-    //           if (err) throw err
-    //           console.log(list)
-    //           c.end()
-    //         })
-    //       }
-    //     })
-    //   })
-    // })
-//   })
-// })
-
-
-
-
-
-// c.on('ready', () => {
-//   // c.list('../../multimedia', (err, list) => {})
-//   fs.readdir(`${__dirname}/multi-upload`), (err, response) => {
-//     if (err) return console.log(err)
-//     c.mkdir('test/uploader/201810/new_folder', err => {
-//       response.forEach((file, i) => {
-//         if (err) {
-//           console.log(err)
-//           c.end()
-//           return
-//         }
-//         c.put(`multi-upload/${file}`, `test/uploader/201810/new_folder/${file}`, err => {
-//           if (err) {
-//             console.log(err)
-//             c.end()
-//             return
-//           }
-//           if ((i + 1) === response.length) {
-//             c.list('test/uploader/201810/new_folder', (err, list) => {
-//               if (err) throw err
-//               console.log(list)
-//               c.end()
-//             })
-//           }
-//         })
-//       })
-//     })
-//   })
-// })
