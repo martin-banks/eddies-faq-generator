@@ -1,0 +1,15 @@
+{
+  "name": "eddies-faq-generator",
+  "version": "1.0.0",
+  "description": "Web abb to generate FAQ pages from Google docs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Martin Banks",
+  "license": "ISC",
+  "dependencies": {
+    "extract-zip": "^1.6.7",
+    "googleapis": "^27.0.0"
+  }
+}
