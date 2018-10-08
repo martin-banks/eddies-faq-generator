@@ -9,7 +9,9 @@
   "author": "Martin Banks",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^6.0.0",
     "extract-zip": "^1.6.7",
+    "ftp": "^0.3.10",
     "googleapis": "^27.0.0"
   }
 }
