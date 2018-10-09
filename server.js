@@ -2,6 +2,8 @@ const express = require('express')
 const next = require('next')
 const bodyParser = require('body-parser')
 
+const faqController = require('./controllers/faqs')
+
 const dev = process.env.NODE_ENV !== 'production'
 const app = next ({ dev })
 const handle = app.getRequestHandler()
@@ -13,21 +15,37 @@ app.prepare()
     const server = express()
 
     server.use(
-      bodyParser.json({ limit: '10mb', extended: true })
+      bodyParser.json({ limit: '1mb', extended: true })
     )
-    server.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
+    server.use(
+      bodyParser.urlencoded({ limit: '1mb', extended: true })
+    )
 
-    server.get('/test', (req ,res) => {
-      res.send('test route working')
-    })
+    // server.use(async (req, res, next) => {
+    //   // res.locals.flashes = req.flash()
+    // })
 
-    
-    server.post('/addpage', (req, res, next) => {
-      res.send('id recieved')
-      const { body } = req
-      console.log({ body })
-    })
-    
+    server.get('/test',
+      faqController.addToManifest,
+      (req ,res) => {
+        res.send('test route working')
+      }
+    )
+
+    server.post('/addpage',
+      faqController.addToManifest,
+      (req, res, next) => {
+        res.json(req.body)
+        const { body } = req
+        console.log({ body })
+      }
+    )
+
+    server.get('/pages',
+      faqController.readManifest,
+      (req, res, next) => app.render(req, res, '/pages')
+    )
+
     server.get('*', (req, res) => {
       return handle(req, res)
     })
@@ -36,6 +54,7 @@ app.prepare()
       if (err) throw err
       console.log(`server running on port ${port}`)
     })
+
   })
   .catch(ex => {
     console.error(ex.stack)
