@@ -25,19 +25,7 @@ export default class AddPage extends React.Component {
         </form>
 
       </Main>
-      <style jsx>{`
-        input, label {
-          display: block;
-          width: 100%;
-          max-width: 500px;
-          font-size: 18px;
-        }
-        input {
-          margin-bottom: 20px;
-          padding: 10px;
-        }
-      `}</style>
-      
+
     </>
     )
   }

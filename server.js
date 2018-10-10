@@ -3,6 +3,7 @@ const next = require('next')
 const bodyParser = require('body-parser')
 
 const faqController = require('./controllers/faqs')
+const driveController = require('./controllers/exportDoc')
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next ({ dev })
@@ -34,6 +35,7 @@ app.prepare()
 
     server.post('/addpage',
       faqController.addToManifest,
+      driveController.exportDoc,
       (req, res, next) => {
         res.json(req.body)
         const { body } = req
