@@ -1,10 +1,10 @@
 
 ### Additional custom ignores ###
-/tpm
-tmp
 credentials.json
 token.json
-tpm/*
+tmp/*.html
+tmp/*.zip
+tmp/*.jpg
 
 
 # Created by https://www.gitignore.io/api/macos,windows,node,adobe,sublimetext,visualstudiocode,vim
