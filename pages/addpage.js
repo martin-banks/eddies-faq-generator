@@ -21,11 +21,17 @@ export default class AddPage extends React.Component {
           <label htmlFor="id" name="id">Google Doc ID</label>
           <input type="text" id="id" name="id" />
 
-          <input type="submit" />
+          <input type="submit" value="FAQ-it" />
         </form>
 
       </Main>
-
+      <style jsx>{`
+        input {
+          display: block;
+          margin-bottom: 12px;
+          font-size: 23px;
+        }
+      `}</style>
     </>
     )
   }

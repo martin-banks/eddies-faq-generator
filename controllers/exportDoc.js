@@ -118,7 +118,7 @@ function listFiles(auth) {
                 console.log('starting corrections')
                 fileContent = fileContent
                   .toString()
-                  .replace('src="images', 'src="https://someserver/images')
+                  .replace('src="images', 'src="http://localhost:3000/corrections/images')
                 console.log('corrections done')
                 console.log('writing corrected file')
                 await fs.writeFileSync(

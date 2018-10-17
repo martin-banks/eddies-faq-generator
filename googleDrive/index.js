@@ -101,8 +101,8 @@ function listFiles(auth) {
                 let fileContent = await fs.readFileSync(path.join(__dirname, './tmp/ENDOFYEAR.html'))
                 fileContent = fileContent
                   .toString()
-                  .replace('src="images', ' src="https://someserver/images')
-
+                  .replace('src="images', ' src="https://localhost:3000/images')
+                fs.writeFileSync(path.join(__dirname, './tmp/corrections'))
                 console.log(fileContent)
               })
           })

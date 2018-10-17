@@ -22,6 +22,8 @@ app.prepare()
       bodyParser.urlencoded({ limit: '1mb', extended: true })
     )
 
+    server.use(express.static('tmp'))
+
     // server.use(async (req, res, next) => {
     //   // res.locals.flashes = req.flash()
     // })

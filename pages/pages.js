@@ -1,12 +1,25 @@
 import React from 'react'
 import Main from '../layouts/main'
 
+const embedCode = `<div>
+  <style href="https://server.com/stylesheet.css"></style>
+  <script src="https://server.com/project_id"></script>
+  <div class="app"></div>
+</div>`
+
 const faqPage = doc => <li>
   <h3>{ doc.title }</h3>
-  <span>{ doc.status }</span>
-  <button>Publish</button>
+  <p>{ doc.id }</p>
+  <p>Embed code:</p>
+  <pre>
+    { embedCode }
+  </pre>
+  <button>
+    <a href="corrections/index.html">Preview</a>
+  </button>
   <button>Update</button>
   <button>Delete</button>
+  <hr />
 </li>
 
 export default class Pages extends React.Component {

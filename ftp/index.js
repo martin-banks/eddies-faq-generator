@@ -1,5 +1,5 @@
 const FTP = require('ftp')
-// https://www.npmjs.com/package/ftp
+// * https://www.npmjs.com/package/ftp
 const fs = require('fs')
 
 require('dotenv').config()
