@@ -36,8 +36,8 @@ app.prepare()
     )
 
     server.post('/addpage',
-      faqController.addToManifest,
       driveController.exportDoc,
+      faqController.addToManifest,
       (req, res, next) => {
         res.json(req.body)
         const { body } = req
