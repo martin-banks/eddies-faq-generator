@@ -7,7 +7,7 @@ require('dotenv').config()
 const { USERNAME, PASSWORD, HOST } = process.env
 const c = new FTP()
 
-const ftp = {
+const ftpSync = {
   list ({ path }) {
     return new Promise((resolve, reject) => {
       c.list(path, (err, list) => {
@@ -48,33 +48,33 @@ c.on('ready', () => {
     const child = 'asyced'
     try {
       console.log('making directory')
-      await ftp.mkdir({ into: parent, name: child })
+      await ftpSync.mkdir({ into: parent, name: child })
     } catch (err) {
-      ftp.end()
+      ftpSync.end()
       throw err
     }
     for (const file of response) {
       try {
         console.log('uploading file:', file)
-        ftp.put({
+        ftpSync.put({
           from: `multi-upload/${file}`,
           into: `${parent}/${child}`,
           file,
         })
       } catch (err) {
-        ftp.end()
+        ftpSync.end()
         throw err
       }
     }
     console.log('all files uploaded')
     try {
       console.log('Fetching list')
-      const list = await ftp.list({ path: `${parent}/${child}`})
+      const list = await ftpSync.list({ path: `${parent}/${child}`})
       console.log({ list })
-      ftp.end()
+      ftpSync.end()
       console.log('discontected from ftp server')
     } catch (err) {
-      ftp.end()
+      ftpSync.end()
       throw err
     }
   })
