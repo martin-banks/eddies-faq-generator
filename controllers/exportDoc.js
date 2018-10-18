@@ -3,6 +3,8 @@ const path = require('path')
 const readline = require('readline')
 const { google } = require('googleapis')
 const extract = require('extract-zip')
+const template = require('../embed/template').template
+const paths = require('../paths')
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -75,7 +77,7 @@ function getAccessToken(oAuth2Client, callback) {
  * Lists the names and IDs of up to 10 files.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listFiles(auth) {
+function listFiles (auth) {
   console.log({ auth })
   console.log('authorized')
   console.log('connecting to drive')
@@ -122,24 +124,30 @@ function listFiles(auth) {
                 console.log('corrections done')
                 console.log('writing corrected file')
                 // write corrected file to local dir
+                const staging = await paths.staging(this.req.body.title)
                 await fs.writeFileSync(
-                  path.join(process.cwd(), `tmp/corrections/index.html`),
+                  `${staging}/index.html`,
+                  // path.join(process.cwd(), `tmp/corrections/index.html`),
                   fileContent
                 )
+                console.log(template)
+                console.log(JSON.stringify(template, 'utf-8', 2))
+                const embed = template({ title: this.req.body.title, location: 'https://someserver' })
+                await fs.writeFileSync(`${staging}/embed.html`, embed)
                 // write public link to manifest
                 // generate embed code
                 // write embedcode to local
+                // await template.write({ title: this.req.body.title, location: 'https://someserver', id: this.id })
                 // push all files to ftp
                 this.res.sendFile(path.join(process.cwd(), 'tmp/corrections/index.html'))
                 console.log('corrected file written')
-              })
-            })
-            dest.end()
+              }
+            )
+          })
+          dest.end()
           // this.next()
         })
         .pipe(dest)
     }
   )
-
-
 }
