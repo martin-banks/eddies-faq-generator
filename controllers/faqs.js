@@ -11,18 +11,19 @@ exports.addToManifest = async (req, res, next) => {
   const { id, title } = req.body
   try {
     const content = require(manifest)
-    content.docs[id] =  {
+    content.docs[id] = {
       title,
       added: Date.now(),
       updated: Date.now(),
       status: 'created',
-      preview: null,
-      url: null
+      preview: null, // req.preview,
+      url: null,
     }
+
     await fs.writeFileSync(manifest, JSON.stringify(content, 'utf-8', 2)) 
   } catch (err) {
     throw err
   }
-
   next()
 }
+
