@@ -121,10 +121,15 @@ function listFiles(auth) {
                   .replace('src="images', 'src="http://localhost:3000/corrections/images')
                 console.log('corrections done')
                 console.log('writing corrected file')
+                // write corrected file to local dir
                 await fs.writeFileSync(
                   path.join(process.cwd(), `tmp/corrections/index.html`),
                   fileContent
-                  )
+                )
+                // write public link to manifest
+                // generate embed code
+                // write embedcode to local
+                // push all files to ftp
                 this.res.sendFile(path.join(process.cwd(), 'tmp/corrections/index.html'))
                 console.log('corrected file written')
               })
