@@ -15,14 +15,10 @@ app.prepare()
   .then(() => {
     const server = express()
 
-    server.use(
-      bodyParser.json({ limit: '1mb', extended: true })
-    )
-    server.use(
-      bodyParser.urlencoded({ limit: '1mb', extended: true })
-    )
+    server.use(bodyParser.json({ limit: '1mb', extended: true }))
+    server.use(bodyParser.urlencoded({ limit: '1mb', extended: true }))
 
-    server.use(express.static('tmp'))
+    server.use('static', express.static('static'))
 
     // server.use(async (req, res, next) => {
     //   // res.locals.flashes = req.flash()
@@ -30,7 +26,7 @@ app.prepare()
 
     server.get('/test',
       faqController.addToManifest,
-      (req ,res) => {
+      (req, res) => {
         res.send('test route working')
       }
     )

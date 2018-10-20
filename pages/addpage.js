@@ -28,6 +28,8 @@ export default class AddPage extends React.Component {
       <style jsx>{`
         input {
           display: block;
+          width: 100%;
+          max-width: 800px;
           margin-bottom: 12px;
           font-size: 23px;
         }

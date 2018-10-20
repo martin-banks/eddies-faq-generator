@@ -5,6 +5,8 @@ token.json
 tmp/*.html
 tmp/*.zip
 tmp/*.jpg
+static/file_system/downloads
+static/file_system/staging
 
 
 # Created by https://www.gitignore.io/api/macos,windows,node,adobe,sublimetext,visualstudiocode,vim

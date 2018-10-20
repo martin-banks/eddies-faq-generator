@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 const fs = require('fs')
 const path = require('path')
 const readline = require('readline')
@@ -5,10 +6,20 @@ const { google } = require('googleapis')
 const extract = require('extract-zip')
 const template = require('../embed/template').template
 const paths = require('../paths')
+const mv = require('mv')
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/drive']
 const TOKEN_PATH = 'token.json'
+
+function mvSync (target, destination) {
+  return new Promise((resolve, reject) => {
+    mv(target, destination, err => {
+      if (err) reject(err)
+      resolve(`${target}\nwas moved successfully`)
+    })
+  })
+}
 
 exports.exportDoc = (req, res, next) => {
   // Load client secrets from a local file.
@@ -87,7 +98,7 @@ function listFiles (auth) {
   var fileId = this.id
   console.log({ fileId })
   const projectName = `${this.title}__${this.id}`
-  const zipFilePath = `${__dirname}/../tmp/${projectName}.zip`
+  const zipFilePath = `${__dirname}/../static/file_system/downloads/${projectName}.zip`
   var dest = fs.createWriteStream(zipFilePath)
   let data = []
   drive.files.export(
@@ -108,39 +119,50 @@ function listFiles (auth) {
             console.log('extracting')
             console.log(process.cwd())
             extract(
-              path.join(process.cwd(), `tmp/${projectName}.zip`),
-              { dir: path.join(process.cwd(), `tmp/${projectName}`) },
-              async err => {
-                if (err) return console.log('Error extracting zip:\n', err, '\n------------')
-                
-                let fileContent = await fs.readFileSync(
-                  path.join(process.cwd(), `tmp/${projectName}/ENDOFYEAR.html`)
-                )
-                console.log('extraction done')
-                console.log('starting corrections')
-                fileContent = fileContent
-                  .toString()
-                  .replace('src="images', 'src="http://localhost:3000/corrections/images')
-                console.log('corrections done')
-                console.log('writing corrected file')
-                // write corrected file to local dir
-                const staging = await paths.staging(this.req.body.title)
-                await fs.writeFileSync(
-                  `${staging}/index.html`,
-                  // path.join(process.cwd(), `tmp/corrections/index.html`),
-                  fileContent
-                )
-                console.log(template)
-                console.log(JSON.stringify(template, 'utf-8', 2))
-                const embed = template({ title: this.req.body.title, location: 'https://someserver' })
-                await fs.writeFileSync(`${staging}/embed.html`, embed)
-                // write public link to manifest
-                // generate embed code
-                // write embedcode to local
-                // await template.write({ title: this.req.body.title, location: 'https://someserver', id: this.id })
-                // push all files to ftp
-                this.res.sendFile(path.join(process.cwd(), 'tmp/corrections/index.html'))
-                console.log('corrected file written')
+              path.join(process.cwd(), `static/file_system/downloads/${projectName}.zip`),
+              { dir: path.join(process.cwd(), `static/file_system/downloads/${projectName}`) },
+              async extractError => {
+                if (extractError) return console.log('Error extracting zip:\n', extractError, '\n------------')
+                fs.readdir(path.join(process.cwd(), `static/file_system/downloads/${projectName}`), async (fileListErr, fileList) => {
+                  if (fileListErr) return console.log('--- ERROR GETTING FILELIST ---\n', fileListErr, '\n-------------------')
+                  console.log({ fileList })
+                  const htmlFile = fileList.filter(f => f.includes('.html'))[0]
+                  try {
+                    let fileContent = await fs.readFileSync(path.join(process.cwd(), `static/file_system/downloads/${projectName}/${htmlFile}`))
+                    console.log('extraction done')
+                    console.log('starting corrections')
+                    fileContent = fileContent
+                      .toString()
+                      .replace(/src="images/gi, `src="http://localhost:3000/static/file_system/staging/${projectName}/images`)
+                    console.log('corrections done')
+                    console.log('writing corrected file')
+                    // write corrected file to local dir
+                    const staging = await paths.staging(`${projectName}`)
+                    console.log({ staging })
+                    // Directory is created if needed in paths module
+                    await fs.writeFileSync(`${staging}/index.html`, fileContent)
+                    console.log(template)
+                    console.log(JSON.stringify(template, 'utf-8', 2))
+                    const embed = template({ title: this.req.body.title, location: 'https://someserver' })
+                    await fs.writeFileSync(`${staging}/embed.html`, embed)
+                    // write public link to manifest
+                    // generate embed code
+                    // write embedcode to local
+                    // await template.write({ title: this.req.body.title, location: 'https://someserver', id: this.id })
+                    // push all files to ftp
+                    
+                    console.log('moving images folder')
+                    await mvSync(path.join(process.cwd(), `static/file_system/downloads/${projectName}/images`), `${staging}/images`)
+                    console.log('images folder moved')
+                    
+                    // this.res.sendFile(path.join(process.cwd(), `static/file_system/staging/${projectName}/index.html`))
+                    // redirect to new faq preview
+                    this.res.redirect(`static/file_system/staging/${projectName}/index.html`)
+                    console.log('corrected file written')
+                  } catch (extractAsyncError) {
+                    return console.error(extractAsyncError)
+                  }
+                })
               }
             )
           })

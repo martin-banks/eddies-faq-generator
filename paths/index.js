@@ -2,7 +2,7 @@ const path = require('path')
 const mkdirp = require('mkdirp')
 
 exports.local = child => {
-  const pathName = path.join(process.cwd(), `tmp/${child.replace(/\s+/g, '_') || `new_${Date.now()}`}`)
+  const pathName = path.join(process.cwd(), `static/file_system/${child.replace(/\s+/g, '_') || `new_${Date.now()}`}`)
   //  return pathName
   return new Promise((resolve, reject) => {
     mkdirp(pathName, err => {
@@ -12,7 +12,7 @@ exports.local = child => {
   })
 }
 exports.downloads = child => {
-  const pathName = path.join(process.cwd(), `tmp/downloads/${child.replace(/\s+/g, '_') || `new_${Date.now()}`}`)
+  const pathName = path.join(process.cwd(), `static/file_system/downloads/${child.replace(/\s+/g, '_') || `new_${Date.now()}`}`)
   //  return pathName
   return new Promise((resolve, reject) => {
     mkdirp(pathName, err => {
@@ -23,7 +23,7 @@ exports.downloads = child => {
 }
 
 exports.staging = child => {
-  const pathName = path.join(process.cwd(), `tmp/staging/${child.replace(/\s+/g, '_') || `new_${Date.now()}`}`)
+  const pathName = path.join(process.cwd(), `static/file_system/staging/${child.replace(/\s+/g, '_') || `new_${Date.now()}`}`)
   //  return pathName
   return new Promise((resolve, reject) => {
     mkdirp(pathName, err => {
