@@ -7,6 +7,10 @@ const extract = require('extract-zip')
 const template = require('../embed/template').template
 const paths = require('../paths')
 const mv = require('mv')
+const FTP = require('ftp')
+const ftpSync = require('../ftp/ftpSync')
+
+require('dotenv').config()
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -39,7 +43,7 @@ exports.exportDoc = (req, res, next) => {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize (credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[0])
@@ -58,7 +62,7 @@ function authorize(credentials, callback) {
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {getEventsCallback} callback The callback for the authorized client.
  */
-function getAccessToken(oAuth2Client, callback) {
+function getAccessToken (oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
@@ -68,13 +72,13 @@ function getAccessToken(oAuth2Client, callback) {
     input: process.stdin,
     output: process.stdout,
   })
-  rl.question('Enter the code from that page here: ', (code) => {
+  rl.question('Enter the code from that page here: ', code => {
     rl.close()
     oAuth2Client.getToken(code, (err, token) => {
       if (err) return console.error('Error retrieving access token', err)
       oAuth2Client.setCredentials(token)
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
         if (err) console.error(err)
         console.log('Token stored to', TOKEN_PATH)
       })
@@ -138,6 +142,7 @@ function listFiles (auth) {
                     console.log('writing corrected file')
                     // write corrected file to local dir
                     const staging = await paths.staging(`${projectName}`)
+                    const downloads = path.join(process.cwd(), `static/file_system/downloads/${projectName}`)
                     console.log({ staging })
                     // Directory is created if needed in paths module
                     await fs.writeFileSync(`${staging}/index.html`, fileContent)
@@ -150,11 +155,72 @@ function listFiles (auth) {
                     // write embedcode to local
                     // await template.write({ title: this.req.body.title, location: 'https://someserver', id: this.id })
                     // push all files to ftp
+
+                    console.log('moving images out of folder', `${downloads}/images`)
+
+                    const imageFiles = await fs.readdirSync(`${downloads}/images`)
+                    console.log({ imageFiles })
+                    for (const file of imageFiles) {
+                      console.log('moving file', file, `${downloads}/images/${file}`)
+                      await mvSync(`${downloads}/images/${file}`, `${staging}/${file}`)
+                    }
+
+                    console.log('images moved')
+
+                    // * Do FTP stuff
+                    const { USERNAME, PASSWORD, HOST } = process.env
+                    const c = new FTP()
+
+                    c.connect({
+                      host: HOST,
+                      user: USERNAME,
+                      password: PASSWORD,
+                      passvTimeout: 5 * 60 * 1000, // 5 minutes
+                    })
+
+                    c.on('ready', () => {
+                      fs.readdir(`${staging}`, async (err, response) => {
+                        console.log('staging files', response)
+                        if (err) return console.log(err)
+                        const parent = `test/uploader/faq`
+                        const child = projectName
+                        try {
+                          console.log('making directory')
+                          await ftpSync(c).mkdir({ into: parent, name: child })
+                        } catch (err) {
+                          console.log(err)
+                          ftpSync(c).end()
+                          return
+                        }
+                        for (const file of response) {
+                          console.log({ staging, file })
+                          try {
+                            console.log('uploading file:', file)
+                            ftpSync(c).put({
+                              from: `${staging}/${file}`,
+                              into: `${parent}/${child}`,
+                              file,
+                            })
+                          } catch (err) {
+                            ftpSync(c).end()
+                            throw err
+                          }
+                        }
+                        console.log('all files uploaded')
+                        try {
+                          console.log('Fetching list')
+                          const list = await ftpSync(c).list({ path: `${parent}/${child}`})
+                          console.log({ list })
+                          ftpSync(c).end()
+                          console.log('discontected from ftp server')
+                        } catch (err) {
+                          ftpSync(c).end()
+                          throw err
+                        }
+                      })
+                    })
                     
-                    console.log('moving images folder')
-                    await mvSync(path.join(process.cwd(), `static/file_system/downloads/${projectName}/images`), `${staging}/images`)
-                    console.log('images folder moved')
-                    
+
                     // this.res.sendFile(path.join(process.cwd(), `static/file_system/staging/${projectName}/index.html`))
                     // redirect to new faq preview
                     this.res.redirect(`static/file_system/staging/${projectName}/index.html`)
