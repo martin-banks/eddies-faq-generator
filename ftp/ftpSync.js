@@ -15,18 +15,19 @@ function ftpSync (c) {
     put ({ file, from, into }) {
       return new Promise((resolve, reject) => {
         c.put(`${from}/${file}`, `${into}/${file}`, err => {
+          console.log({ file, from, into})
           if (err) reject(err)
-          console.log(`-- SUCCESS --\n${into}/${file} was successfully uploaded`)
-          resolve(`-- SUCCESS --\n${into}/${file} was successfully uploaded`)
+          console.log(`-- PUT SUCCESS --\n${into}/${file} was successfully uploaded`)
+          resolve(`-- PUT SUCCESS --\n${into}/${file} was successfully uploaded`)
         })
       })
     },
     mkdir ({ into, name }) {
       return new Promise((resolve, reject) => {
         c.mkdir(`${into}/${name}`, err => {
-          if (err) reject(err)
-          console.log(`-- SUCCESS --\n${into}/${name} was successfully created`)
-          resolve(`-- SUCCESS --\n${into}/${name} was successfully created`)
+          if (err) return reject(err)
+          console.log(`-- MKDIR SUCCESS --\n${into}/${name} was successfully created`)
+          resolve(`-- MKDIR SUCCESS --\n${into}/${name} was successfully created`)
         })
       })
     },
@@ -37,4 +38,3 @@ function ftpSync (c) {
 }
 
 module.exports = ftpSync
-

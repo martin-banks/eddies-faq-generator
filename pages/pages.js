@@ -7,20 +7,35 @@ const embedCode = `<div>
   <div class="app"></div>
 </div>`
 
-const faqPage = doc => <li>
+const faqPage = doc => (<li>
   <h3>{ doc.title }</h3>
   <p>{ doc.id }</p>
   <p>Embed code:</p>
-  <pre>
-    { embedCode }
-  </pre>
+  <pre>{ doc.embed }</pre>
   <button>
-    <a href="corrections/index.html">Preview</a>
+    <a href={ doc.preview }>Preview</a>
   </button>
-  <button>Update</button>
-  <button>Delete</button>
+  {/* <button>Update</button> */}
+  {/* <button>Delete</button> */}
   <hr />
-</li>
+  <style jsx>{`
+    pre {
+      background: black;
+      color: #bada55;
+      overflow: scroll;
+      padding: 20px
+    }
+    button {
+      display: block;
+      padding: 10px 20px;
+      border: solid 1px #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+  `}</style>
+</li>)
 
 export default class Pages extends React.Component {
   static async getInitialProps (context) {
@@ -42,8 +57,9 @@ export default class Pages extends React.Component {
                 .map(faqPage)
             }
           </ul>
-          <pre>{ JSON.stringify(this.props.locals.manifest, 'utf-8', 2) }</pre>
+          {/* <pre>{ JSON.stringify(this.props.locals.manifest, 'utf-8', 2) }</pre> */}
         </Main>
+        
       </div>
     )
   }

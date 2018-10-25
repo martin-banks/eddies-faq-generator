@@ -25,6 +25,8 @@ function mvSync (target, destination) {
   })
 }
 
+const mediaServer = 'https://media.news.com.au/nnd/T3Interactives/test/uploader/faq'
+
 exports.exportDoc = (req, res, next) => {
   // Load client secrets from a local file.
   const { id, title } = req.body
@@ -137,7 +139,15 @@ function listFiles (auth) {
                     console.log('starting corrections')
                     fileContent = fileContent
                       .toString()
-                      .replace(/src="images/gi, `src="http://localhost:3000/static/file_system/staging/${projectName}/images`)
+                      .replace(/src="images/gi, `src="${mediaServer}/${projectName}`)
+                      // remove links to font import
+                      // fails in Kurator validation
+                      .replace(/\@import url\(.+\)\; \./, '\.')
+
+                      /* 
+                      @import url(https://themes.googleusercontent.com/fonts/css?kit=fpjTOVmNbO4Lz34iLyptLcWpXo_CmM6erK5IinBZ-8PVus-cM8ZA-pXCeyO7rfhH96xlbbE5D7Gw2o7jubnkMA); */
+                      
+
                     console.log('corrections done')
                     console.log('writing corrected file')
                     // write corrected file to local dir
@@ -146,15 +156,18 @@ function listFiles (auth) {
                     console.log({ staging })
                     // Directory is created if needed in paths module
                     await fs.writeFileSync(`${staging}/index.html`, fileContent)
+                    const faqAsString = fileContent
+                      .replace(/"/g, '\\"')
+                      .replace(/'/g, "\\'")
+                    await fs.writeFileSync(`${staging}/app.js`, `document.querySelector('#${projectName}').innerHTML = "${faqAsString}"`)
                     console.log(template)
                     console.log(JSON.stringify(template, 'utf-8', 2))
-                    const embed = template({ title: this.req.body.title, location: 'https://someserver' })
+                    const embed = template({
+                      title: projectName,
+                      location: `${mediaServer}/${projectName}`
+                    })
                     await fs.writeFileSync(`${staging}/embed.html`, embed)
-                    // write public link to manifest
-                    // generate embed code
-                    // write embedcode to local
-                    // await template.write({ title: this.req.body.title, location: 'https://someserver', id: this.id })
-                    // push all files to ftp
+
 
                     console.log('moving images out of folder', `${downloads}/images`)
 
@@ -197,9 +210,9 @@ function listFiles (auth) {
                           try {
                             console.log('uploading file:', file)
                             ftpSync(c).put({
-                              from: `${staging}/${file}`,
-                              into: `${parent}/${child}`,
                               file,
+                              from: `${staging}`,
+                              into: `${parent}/${child}`,
                             })
                           } catch (err) {
                             ftpSync(c).end()
@@ -223,7 +236,13 @@ function listFiles (auth) {
 
                     // this.res.sendFile(path.join(process.cwd(), `static/file_system/staging/${projectName}/index.html`))
                     // redirect to new faq preview
-                    this.res.redirect(`static/file_system/staging/${projectName}/index.html`)
+                    const preview = `${mediaServer}/${projectName}/index.html`
+                    this.req.body.embed = template({
+                      title: projectName,
+                      location: `${mediaServer}/${projectName}`
+                    })
+                    this.req.body.preview = preview
+                    this.next()
                     console.log('corrected file written')
                   } catch (extractAsyncError) {
                     return console.error(extractAsyncError)

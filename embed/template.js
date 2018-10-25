@@ -1,16 +1,11 @@
 const fs = require('fs')
 const paths = require('../paths')
 
-exports.template = ({ title, location }) => `
-<div>
+exports.template = ({ title, location }) => `<div>
   <style href="${location}/index.css"></style>
-  <script src="${location}/page.js></script>
-  <script>
-    document.querySelector('#faq-${title}').innerHTML = template
-  </script>
-  <div id="faq-${title}"></div>
-</div>
-`
+  <div id="${title}"></div>
+  <script src="${location}/app.js"></script>
+</div>`
 
 
 

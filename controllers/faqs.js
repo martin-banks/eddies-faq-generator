@@ -8,15 +8,17 @@ exports.readManifest = async (req, res, next) => {
 }
 
 exports.addToManifest = async (req, res, next) => {
-  const { id, title } = req.body
+  const { id, title, embed, preview } = req.body
   try {
     const content = require(manifest)
-    content.docs[id] = {
+    content.docs[title] = {
+      id,
       title,
+      embed,
       added: Date.now(),
       updated: Date.now(),
       status: 'created',
-      preview: null, // req.preview,
+      preview, // req.preview,
       url: null,
     }
 

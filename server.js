@@ -35,9 +35,10 @@ app.prepare()
       driveController.exportDoc,
       faqController.addToManifest,
       (req, res, next) => {
-        res.json(req.body)
-        const { body } = req
-        console.log({ body })
+        // res.json(req.body)
+        // const { body } = req
+        // console.log({ body })
+        res.redirect('/pages')
       }
     )
 
