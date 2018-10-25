@@ -8,7 +8,7 @@ const driveController = require('./controllers/exportDoc')
 const dev = process.env.NODE_ENV !== 'production'
 const app = next ({ dev })
 const handle = app.getRequestHandler()
-const port = 3000
+const port = 3339
 
 
 app.prepare()
