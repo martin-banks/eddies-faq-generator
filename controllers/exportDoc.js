@@ -144,10 +144,6 @@ function listFiles (auth) {
                       // fails in Kurator validation
                       .replace(/\@import url\(.+\)\; \./, '\.')
 
-                      /* 
-                      @import url(https://themes.googleusercontent.com/fonts/css?kit=fpjTOVmNbO4Lz34iLyptLcWpXo_CmM6erK5IinBZ-8PVus-cM8ZA-pXCeyO7rfhH96xlbbE5D7Gw2o7jubnkMA); */
-                      
-
                     console.log('corrections done')
                     console.log('writing corrected file')
                     // write corrected file to local dir
@@ -155,6 +151,7 @@ function listFiles (auth) {
                     const downloads = path.join(process.cwd(), `static/file_system/downloads/${projectName}`)
                     console.log({ staging })
                     // Directory is created if needed in paths module
+                    await fs.writeFileSync(`${staging}/index.css`)
                     await fs.writeFileSync(`${staging}/index.html`, fileContent)
                     const faqAsString = fileContent
                       .replace(/"/g, '\\"')
