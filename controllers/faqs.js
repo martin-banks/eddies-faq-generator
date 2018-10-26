@@ -11,7 +11,7 @@ exports.addToManifest = async (req, res, next) => {
   const { id, title, embed, preview } = req.body
   try {
     const content = require(manifest)
-    content.docs[title] = {
+    content.docs[id] = {
       id,
       title,
       embed,
@@ -26,6 +26,14 @@ exports.addToManifest = async (req, res, next) => {
   } catch (err) {
     throw err
   }
+  next()
+}
+
+exports.getFaq = async (req, res, next) => {
+  const faq = require(manifest)
+  const { id } = req.params
+  console.log('faq', faq.docs[id])
+  res.locals.faq = faq.docs[id]
   next()
 }
 
