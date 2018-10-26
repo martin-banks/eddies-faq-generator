@@ -89,16 +89,6 @@
       "status": "created",
       "preview": "https://media.news.com.au/nnd/T3Interactives/test/uploader/faq/rep3__1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw/index.html",
       "url": null
-    },
-    "1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw": {
-      "id": "1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw",
-      "title": "sample",
-      "embed": "<div>\n  <style href=\"https://media.news.com.au/nnd/T3Interactives/test/uploader/faq/sample__1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw/index.css\"></style>\n  <div id=\"sample__1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw\"></div>\n  <script src=\"https://media.news.com.au/nnd/T3Interactives/test/uploader/faq/sample__1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw/app.js\"></script>\n</div>",
-      "added": 1540464409772,
-      "updated": 1540464409772,
-      "status": "created",
-      "preview": "https://media.news.com.au/nnd/T3Interactives/test/uploader/faq/sample__1bdc4Le5rd8B7tgkMQI-TT18c72b1CYv8nwrkcmbvTOw/index.html",
-      "url": null
     }
   }
 }
