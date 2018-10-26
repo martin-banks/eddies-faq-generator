@@ -15,6 +15,9 @@ const faqPage = doc => (<li>
   <button>
     <a href={ doc.preview }>Preview</a>
   </button>
+  <a href={ `edit/${doc.id}` }>
+    <button>Edit</button>
+  </a>
   {/* <button>Update</button> */}
   {/* <button>Delete</button> */}
   <hr />
@@ -26,13 +29,13 @@ const faqPage = doc => (<li>
       padding: 20px
     }
     button {
-      display: block;
+      display: inline-block;
       padding: 10px 20px;
+      margin: 4px;
       border: solid 1px #ccc;
       border-radius: 8px;
       font-size: 16px;
       margin-bottom: 20px;
-      width: 100%;
     }
   `}</style>
 </li>)
