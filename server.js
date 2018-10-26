@@ -25,7 +25,6 @@ app.prepare()
     // })
 
     server.get('/test',
-      faqController.addToManifest,
       (req, res) => {
         res.send('test route working')
       }
@@ -45,6 +44,14 @@ app.prepare()
     server.get('/pages',
       faqController.readManifest,
       (req, res, next) => app.render(req, res, '/pages')
+    )
+
+    server.get('/edit/:id',
+      faqController.getFaq,
+      (req, res, next) => {
+        console.log(res.locals)
+        app.render(req, res, '/edit')
+      }
     )
 
     server.get('*', (req, res) => {
